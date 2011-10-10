@@ -1,0 +1,40 @@
+                if (validFile)
+                {
+                    while (!file1.EndOfStream)
+                    {
+                        string[] splitLine = oneline.Split(delim);
+
+                        _RefAdjImport.UBI = splitLine[0].Replace("\"", "");
+                        _RefAdjImport.RetAccount = splitLine[1].Replace("\"", "");
+                        _RefAdjImport.StandardPremium = Double.Parse(Regex.Replace(splitLine[2], "[^.0-9]", ""));
+                        _RefAdjImport.Percent = Double.Parse(Regex.Replace(splitLine[3], "[^.0-9]", ""));
+                        _RefAdjImport.Refund = Double.Parse(Regex.Replace(splitLine[4], "[^.0-9]", ""));
+                        _RefAdjImport.Credit = Double.Parse(Regex.Replace(splitLine[5], "[^.0-9]", ""));
+                        _RefAdjImport.RefAdjImportId = System.Guid.NewGuid();
+                        _RefAdjImport.ProgramYear = Int16.Parse(progyear);
+                        _RefAdjImport.MembershipType = membtype;
+
+                        // add your newly populated entity to the collection                  
+                        //_context.EntityContainer.GetEntitySet<FinancialRefundAdjustmentImport>().Add(_RefAdjImport);
+                        _context.FinancialRefundAdjustmentImports.Add(_RefAdjImport);
+                        //_context.SubmitChanges();
+                        recordCount += 1; 
+                        oneline = file1.ReadLine();
+                        int counts = _context.FinancialRefundAdjustmentImports.Count;
+                        _RefAdjImport = null;
+                        _RefAdjImport = new FinancialRefundAdjustmentImport();
+                    }      
+
+                }
+                else
+                {
+                    MessageBox.Show("file is not formatted correctly");  // TODO:  figure out correct verbage
+                    return 0;
+                }
+ 
+                // write them to the database!
+                if (_context.HasChanges)
+                {
+                   
+                    _context.SubmitChanges();
+                }           
